@@ -2,3 +2,4 @@ target/
 *.db
 *.log
 .DS_Store
+Cargo.lock.bak

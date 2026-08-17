@@ -1,0 +1,35 @@
+[package]
+name = "quincho-core"
+version.workspace = true
+edition.workspace = true
+description = "Quincho engine (from hefesto-core): in-memory repository, SOPS/age vault, build, deploy, snapshots, reports"
+
+[dependencies]
+# config + parsing
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+# repo download (blocking is fine for a CLI; rustls avoids system OpenSSL)
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "rustls-tls", "gzip"] }
+tar = "0.4"
+zip = { version = "2", default-features = false, features = ["deflate"] }
+base64 = "0.22"
+# SOPS/age vault (files encrypted whole with SOPS binary mode + age recipients)
+age = { version = "0.11", features = ["armor"] }
+aes-gcm = "0.10"
+typenum = "1"
+# legacy openssl-enc-compatible decryption (hefesto ed.sh 1.x) — kept until every repo is on SOPS
+aes = "0.8"
+cbc = { version = "0.1", features = ["block-padding", "alloc"] }
+pbkdf2 = { version = "0.12", default-features = false, features = ["hmac"] }
+sha2 = "0.10"
+zeroize = "1"
+# UX (Config::load prompts when the config file itself is encrypted)
+inquire = "0.7"
+anyhow = "1"
+libc = "0.2"
+lettre = { version = "0.11", default-features = false, features = ["smtp-transport", "builder", "rustls-tls"] }
+hostname = "0.4"
+
+[dev-dependencies]
+age = { version = "0.11", features = ["armor"] }

@@ -1,0 +1,15 @@
+[workspace]
+resolver = "3"
+members = ["core", "agent"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+repository = "https://github.com/carlos-camponuevo/quincho"
+
+[profile.release]
+strip = true
+lto = true
+panic = "abort"
+codegen-units = 1
