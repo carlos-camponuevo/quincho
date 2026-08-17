@@ -1,0 +1,46 @@
+# Build + test on every push; on a v* tag publish the Linux x86_64 agent binary
+# as a GitHub release asset (with .sha256). PAM is a dynamic system library on
+# every Linux, so the binary is glibc-dynamic (built on Ubuntu 22.04 for the
+# widest compatibility) — the target hosts are Ubuntu Docker Swarm managers.
+name: build
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: toolchain
+        run: |
+          rustup update stable && rustup default stable
+          sudo apt-get update -qq && sudo apt-get install -y -qq libpam0g-dev age
+          curl -sSfL https://github.com/getsops/sops/releases/download/v3.9.4/sops-v3.9.4.linux.amd64 -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
+      - uses: Swatinem/rust-cache@v2
+      - name: test
+        run: cargo test --workspace --locked 2>&1 | tail -20
+      - name: build (release)
+        run: |
+          cargo build --release --locked -p quincho-agent
+          mkdir -p dist && cp target/release/quincho-agent dist/
+          cp -r install dist/
+          cd dist && tar czf quincho-agent-linux-x86_64.tar.gz quincho-agent install && sha256sum quincho-agent-linux-x86_64.tar.gz > quincho-agent-linux-x86_64.tar.gz.sha256
+          ldd quincho-agent | sed 's/^/  /'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quincho-agent-linux-x86_64
+          path: dist/quincho-agent-linux-x86_64.tar.gz*
+      - name: release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/quincho-agent-linux-x86_64.tar.gz
+            dist/quincho-agent-linux-x86_64.tar.gz.sha256
+          generate_release_notes: true
