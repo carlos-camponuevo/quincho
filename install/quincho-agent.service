@@ -1,0 +1,30 @@
+# /etc/systemd/system/quincho-agent.service
+[Unit]
+Description=Quincho agent — governed Docker Swarm deploys (unix socket only)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+# root is required for PAM authentication of arbitrary users and for docker;
+# the process drops what it can itself (no core dumps, PR_SET_DUMPABLE=0, umask 077).
+ExecStart=/usr/local/bin/quincho-agent --socket /run/quincho/quincho.sock --socket-group quincho --group quincho --work /dev/shm/quincho
+Restart=on-failure
+RestartSec=3
+Environment=RUST_LOG=info
+# journald is the agent's audit sink (BullDock keeps the SQLite record)
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=quincho-agent
+# hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/run/quincho /dev/shm/quincho
+PrivateTmp=true
+ProtectHome=read-only
+LimitCORE=0
+RuntimeDirectory=quincho
+RuntimeDirectoryMode=0750
+
+[Install]
+WantedBy=multi-user.target

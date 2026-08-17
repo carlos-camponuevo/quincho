@@ -1,0 +1,6 @@
+# /etc/pam.d/quincho — the PAM service the agent authenticates operators against.
+# Debian/Ubuntu: reuse the system stacks; RHEL family: replace with
+#   auth    include system-auth
+#   account include system-auth
+@include common-auth
+@include common-account
