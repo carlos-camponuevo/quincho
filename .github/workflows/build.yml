@@ -20,7 +20,7 @@ jobs:
       - name: toolchain
         run: |
           rustup update stable && rustup default stable
-          sudo apt-get update -qq && sudo apt-get install -y -qq libpam0g-dev age
+          sudo apt-get update -qq && sudo apt-get install -y -qq libpam0g-dev libclang-dev clang age
           curl -sSfL https://github.com/getsops/sops/releases/download/v3.9.4/sops-v3.9.4.linux.amd64 -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops
       - uses: Swatinem/rust-cache@v2
       - name: test
