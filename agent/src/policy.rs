@@ -2,9 +2,9 @@
 //! other `.yml`, so it arrives inside the decrypted bundle):
 //!
 //! ```yaml
-//! host: AZCRNRONEVTA01
-//! deployers: { carlos: carlos@ipremios.com }   # linux user -> SSO email
-//! builders:  { carlos: carlos@ipremios.com }
+//! host: HOST01
+//! deployers: { alice: alice@example.com }   # linux user -> SSO email
+//! builders:  { alice: alice@example.com }
 //! approvers: []
 //! notify: { deploy: [..], build: [..], security: [..] }
 //! ```
@@ -94,26 +94,26 @@ mod tests {
     use super::*;
 
     fn pol() -> Policy {
-        Policy::parse(b"host: EVTA01\ndeployers: { carlos: carlos@ipremios.com }\nbuilders: {}\n").unwrap()
+        Policy::parse(b"host: HOST01\ndeployers: { alice: alice@example.com }\nbuilders: {}\n").unwrap()
     }
 
     #[test]
     fn allows_the_bound_person_on_the_bound_host() {
-        assert!(pol().authorize(Action::Deploy, "evta01", "carlos", "Carlos@iPremios.com").is_ok());
+        assert!(pol().authorize(Action::Deploy, "host01", "alice", "Alice@Example.com").is_ok());
     }
 
     #[test]
     fn refuses_other_host_user_or_email() {
-        assert!(pol().authorize(Action::Deploy, "evla03", "carlos", "carlos@ipremios.com").is_err());
-        assert!(pol().authorize(Action::Deploy, "evta01", "mallory", "carlos@ipremios.com").is_err());
-        assert!(pol().authorize(Action::Deploy, "evta01", "carlos", "mallory@x.com").is_err());
-        assert!(pol().authorize(Action::Build, "evta01", "carlos", "carlos@ipremios.com").is_err());
+        assert!(pol().authorize(Action::Deploy, "host03", "alice", "alice@example.com").is_err());
+        assert!(pol().authorize(Action::Deploy, "host01", "mallory", "alice@example.com").is_err());
+        assert!(pol().authorize(Action::Deploy, "host01", "alice", "mallory@x.com").is_err());
+        assert!(pol().authorize(Action::Build, "host01", "alice", "alice@example.com").is_err());
     }
 
     #[test]
     fn host_gate_binds_devops_repos_only() {
-        assert!(host_gate("https://github.com/x/devops-azcrnronevta01.git", "AZCRNRONEVTA01").is_ok());
-        assert!(host_gate("devops-azcrnronevta01", "azcrnronevla03").is_err());
+        assert!(host_gate("https://github.com/x/devops-host01.git", "HOST01").is_ok());
+        assert!(host_gate("devops-host01", "host03").is_err());
         assert!(host_gate("https://github.com/x/some-app", "anything").is_ok());
     }
 }

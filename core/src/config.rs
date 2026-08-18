@@ -30,7 +30,7 @@ pub struct MailCfg {
 }
 
 fn default_mail_from() -> String {
-    "noreply@ipremios.com".into()
+    std::env::var("QUINCHO_MAIL_FROM").unwrap_or_else(|_| "noreply@example.com".into())
 }
 
 /// Fallback for configs without a `mail` block (e.g. `-git` mode):
@@ -342,13 +342,13 @@ mod tests {
     #[test]
     fn parses_github_urls() {
         let (prov, o, p, r) =
-            parse_git_url("https://github.com/my-org/devops-azcrpronevla03.git").unwrap();
+            parse_git_url("https://github.com/my-org/devops-host03.git").unwrap();
         assert_eq!((prov.as_str(), o.as_str(), p.as_str(), r.as_str()),
-                   ("github", "my-org", "", "devops-azcrpronevla03"));
+                   ("github", "my-org", "", "devops-host03"));
         let (prov, o, _, r) = parse_git_url("git@github.com:my-org/rust-hefesto.git").unwrap();
         assert_eq!((prov.as_str(), o.as_str(), r.as_str()), ("github", "my-org", "rust-hefesto"));
         // azdo still works through the same entry point
-        let (prov, ..) = parse_git_url("https://ExampleOrg@dev.azure.com/ExampleOrg/BatDevops/_git/devops-azcrnbrnevta19").unwrap();
+        let (prov, ..) = parse_git_url("https://ExampleOrg@dev.azure.com/ExampleOrg/ExampleProject/_git/devops-host19").unwrap();
         assert_eq!(prov, "azdo");
     }
 

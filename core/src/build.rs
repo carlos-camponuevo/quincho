@@ -498,7 +498,7 @@ pub struct BuildSpec {
 }
 
 fn default_namespace() -> String {
-    "camponuevo".into()
+    std::env::var("QUINCHO_DEFAULT_NAMESPACE").unwrap_or_else(|_| "example".into())
 }
 fn default_registry_host() -> String {
     "docker.io".into()
@@ -941,11 +941,11 @@ buildStackAzure "zauat" "repoList[@]"
         let ghcr = Destination {
             host: "ghcr.io".into(),
             namespace: "my-org".into(),
-            user: Some("Carlos-Camponuevo".into()),
+            user: Some("Example-Org".into()),
             user_env: None,
             pat_env: None,
         };
-        assert_eq!(ghcr.user.as_deref(), Some("Carlos-Camponuevo"));
+        assert_eq!(ghcr.user.as_deref(), Some("Example-Org"));
         assert_eq!(ghcr.namespace, "my-org");
         assert_eq!(
             hub.image_ref("admin-api", "uat.latest"),

@@ -22,6 +22,10 @@ Start with [docs/DESIGN.md](docs/DESIGN.md).
 ### Try it locally (no docker needed)
 
 ```sh
-cargo build && QUINCHO_DEV_PASSWORD=devpass ./target/debug/quincho-agent --socket /tmp/q.sock --work /tmp/qwork --host EVTA01 --group staff
+cargo build && QUINCHO_DEV_PASSWORD=devpass ./target/debug/quincho-agent --socket /tmp/q.sock --work /tmp/qwork --host HOST01 --group staff
 curl -s --unix-socket /tmp/q.sock http://q/health
 ```
+
+## License
+
+MIT. The public repository names no customer: examples use `example.com` / `HOST01` placeholders; deployments carry their own names in their private `devops-*` repositories.

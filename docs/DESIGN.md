@@ -44,7 +44,7 @@ whatever material the action needs; the agent zeroizes it afterwards.
 ## 2. Key model — keys only in memory, never on the server
 
 Requirement (owner): *nobody must be able to copy a private/public key and deploy
-on another server; if BAT removes my access I must lose nothing.*
+on another server; if the hosting party revokes my access I must lose nothing.*
 
 Rejected: Azure Key Vault (not owned/managed by us). Optional later: TPM-sealed
 key as an *extra* recipient for unattended jobs.
@@ -98,14 +98,14 @@ Four gates, all required, nothing stored:
 `.quincho.yml` (encrypted like every other `.yml`, history in git):
 
 ```yaml
-host: AZCRNRONEVTA01
-deployers: { carlos: carlos@ipremios.com, marius: marius@bat.com }   # linux user -> SSO email
-builders:  { carlos: carlos@ipremios.com }
+host: HOST01
+deployers: { alice: alice@example.com, bob: bob@partner.example }   # linux user -> SSO email
+builders:  { alice: alice@example.com }
 approvers: []            # optional four-eyes for PROD hosts
 notify:
-  deploy:   [platform@ipremios.com]
-  build:    [platform@ipremios.com]
-  security: [carlos@ipremios.com]
+  deploy:   [platform@example.com]
+  build:    [platform@example.com]
+  security: [security@example.com]
 ```
 
 Session binding: SSO email, Linux user and TOTP identity must name the same person.
