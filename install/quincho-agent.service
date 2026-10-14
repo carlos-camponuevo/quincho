@@ -25,6 +25,9 @@ ProtectHome=read-only
 LimitCORE=0
 RuntimeDirectory=quincho
 RuntimeDirectoryMode=0750
+# keep /run/quincho when the agent stops or restarts: BullDock bind-mounts it, and Swarm rejects
+# the BullDock task while the bind source is missing (systemd deletes a RuntimeDirectory on stop)
+RuntimeDirectoryPreserve=yes
 
 [Install]
 WantedBy=multi-user.target
